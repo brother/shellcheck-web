@@ -14,10 +14,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=10" />
   <meta name="description" content="ShellCheck is a free, online and offline tool that detects problems and suggests improvements to shell scripts." />
   <meta name="apple-mobile-web-app-title" content="ShellCheck" />
-  <link href="sunburst.css" type="text/css" rel="stylesheet">
-  <script type="text/javascript" src="prettify.js"> </script>
-  <script type="text/javascript" src="jquery.js"> </script>
-  <script type="text/javascript" src="shellcheck.js"> </script>
+  <link href="data/sunburst.css" type="text/css" rel="stylesheet">
+  <script type="text/javascript" src="data/prettify.js"> </script>
+  <script type="text/javascript" src="data/jquery.js"> </script>
+  <script type="text/javascript" src="data/shellcheck.js"> </script>
 
 <pre id="sample" style="display: none">
 #!/bin/sh
@@ -40,12 +40,12 @@ var lastThing;
       var now = $("#code").val();
       if (lastThing !== now && now !== "") {
         lastThing = now;
-        if($("#status").attr("src") !== "spinner.gif") {
-          $("#status").attr("src", "spinner.gif");
+        if($("#status").attr("src") !== "data/spinner.gif") {
+          $("#status").attr("src", "data/spinner.gif");
         }
         runAfterDelay(1, 2000, function() {
           transfer('#code', '#console');
-          $("#status").attr("src", "down.png");
+          $("#status").attr("src", "data/down.png");
         });
       }
     };
@@ -178,7 +178,7 @@ var lastThing;
 <body>
   <div class="all">
     <div class="aligner">
-      <img src="header.png" style="width: 300px; margin-bottom: -1em;" title="ShellCheck by Vidar Holen" alt="ShellCheck" /><br />
+      <img src="data/header.png" style="width: 300px; margin-bottom: -1em;" title="ShellCheck by Vidar Holen" alt="ShellCheck" /><br />
       automatically <a href="about.html">detects problems</a> with sh/bash scripts and commands.
     </div>
     <div class="aligner">
@@ -207,7 +207,7 @@ var lastThing;
     <div class="aligner">
       <div class="box middle">
         <a href="#" onclick="javascript: transfer('#code', '#console')" class="buttoncrap imgbutton">
-          <img id="status" src="down.png" alt="Submit" title="Click to update" style="width: 4em; border: 0px;" />
+          <img id="status" src="data/down.png" alt="Submit" title="Click to update" style="width: 4em; border: 0px;" />
         </a>
       </div>
     </div>
