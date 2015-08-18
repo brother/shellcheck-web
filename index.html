@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<!--
+*  This html file, the ShellCheck.net Web UI front page HTML,
+*  is free of known copyright restriction. The author,
+*  Vidar Holen, waives any copyright claims to it.
+*
+*  This statement does not apply to the external dependencies
+*  of this file, like javascript, stylesheets and images.
+-->
+
+<html>
+<head>
+  <title>ShellCheck &ndash; Shell script analyzer</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=10" />
+  <meta name="description" content="ShellCheck is a free, online and offline tool that detects problems and suggests improvements to shell scripts." />
+  <meta name="apple-mobile-web-app-title" content="ShellCheck" />
+  <link href="sunburst.css" type="text/css" rel="stylesheet">
+  <script type="text/javascript" src="prettify.js"> </script>
+  <script type="text/javascript" src="jquery.js"> </script>
+  <script type="text/javascript" src="shellcheck.js"> </script>
+
+<pre id="sample" style="display: none">
+#!/bin/sh
+## Example of a broken script. Hit the Down Arrow button to ShellCheck it!
+for f in $(ls *.m3u)
+do
+  grep -qi hq.*mp3 $f \
+    && echo -e 'Playlist $f contains a HQ file in mp3 format'
+done
+</pre>
+<script>
+
+var lastThing;
+
+  $(document).ready(function() {
+    addTextHint(document.getElementById("code"), $("#sample").text());
+    lastThing=$("#code").val();
+
+    var mod = function() {
+      var now = $("#code").val();
+      if (lastThing !== now && now !== "") {
+        lastThing = now;
+        if($("#status").attr("src") !== "spinner.gif") {
+          $("#status").attr("src", "spinner.gif");
+        }
+        runAfterDelay(1, 2000, function() {
+          transfer('#code', '#console');
+          $("#status").attr("src", "down.png");
+        });
+      }
+    };
+    delaymod = function() { setTimeout(mod, 100); }
+
+    $("#code").change(delaymod).keyup(delaymod).bind('paste', delaymod);
+
+  });
+
+
+  function toggleSize() {
+    if ($("#code").hasClass("small")) {
+      $("#code").removeClass("small").addClass("large");
+    } else {
+      $("#code").removeClass("large").addClass("small");
+    }
+  }
+</script>
+  <style type="text/css">
+    body {
+/*      background-color: #e4e4e4;  */
+      background-color: #f9f9f9;
+      height: 100%;
+      padding: 0em;
+      margin: 0em;
+    }
+    html {
+      height: 100%;
+      padding: 0em;
+      margin: 0em;
+    }
+
+    .all {
+      height: 100%;
+      padding: 0em;
+      margin: 0em;
+      overflow: auto;
+    }
+
+    .box {
+      text-align: left;
+      background-color: #e9e9e9;
+      border: 1px solid #d0d0d0;
+      padding: 1em;
+      margin: 16px;
+    }
+
+    .imgbutton {
+      margin-top: -2em;
+      margin-bottom: -2em;
+    }
+
+    .header {
+      margin-bottom: 1em;
+    }
+
+    .rest {
+    }
+
+    .tip {
+      display: inline-block;
+      font-size: 75%;
+    }
+
+    .input {
+      width: 100%;
+    }
+    .aligner {
+      text-align: center;
+      padding: 0em;
+      margin: 0em;
+    }
+    .helptext { color: #FFF; }
+    #console {
+      margin: 0em;
+      width: 100%;
+      padding-top: 1em;
+      padding-bottom: 1em;
+      font-family: Monospace, Courier;
+      background-color: black;
+      font-size: 75%;
+      color: #dddddd;
+      min-height: 4em;
+    }
+    div.middle {
+      display: inline-block;
+      border-top: 0px;
+      border-bottom: 0px;
+      margin: -18px;
+      z-order: 1000;
+    }
+    h2 {
+      margin: 0em;
+    }
+    .ghosted {
+      color: #A0A0A0;
+    }
+
+    .small {
+      height: 12em;
+    }
+    .large {
+      height: 40em;
+    }
+    #feedbacklink {
+      color: #EEF;
+    }
+
+    .comment {
+      background-color: #000;
+      margin-left: 4px;
+      margin-right: 4px;
+      padding: 4px 8px 4px 8px;
+      border: solid 1px white;
+      font-weight: bold;
+      border-radius: 3px;
+      display: inline-block;
+    }
+    .msiehack { color: #000; }
+    .errorc { color: #F00; }
+    .warningc { color: #FA0; }
+    .infoc { color: #EF0; }
+    .stylec { color: #0F0; }
+    .linenumber { color: #AAA; }
+    .helptext { color: #FFF; }
+    .summary { font-size: 125%; font-weight: bold; color: #FFF; text-align: right; margin-right: 1em; }
+  </style>
+</head>
+
+<body>
+  <div class="all">
+    <div class="aligner">
+      <img src="header.png" style="width: 300px; margin-bottom: -1em;" title="ShellCheck by Vidar Holen" alt="ShellCheck" /><br />
+      automatically <a href="about.html">detects problems</a> with sh/bash scripts and commands.
+    </div>
+    <div class="aligner">
+      <div class="box">
+        <div class="header">
+          <h2>Paste shell script</h2>
+          or download and <a href="about.html">run locally</a>. Advice is shell specific, so include the shebang!
+        </div>
+
+        <div class="rest">
+		  <textarea class="input small" id="code">
+		  </textarea>
+        </div>
+
+        <div style="clear: both"></div>
+        <div class="tip" style="float: left">
+          <a href="#" onclick="$('#code').val('')">Clear field</a>
+        </div>
+        <div class="tip" style="float: right">
+          <a href="#" onclick="identify('#code', '#console');">Name syntax</a> &nbsp;&nbsp;&nbsp;
+          <a href="#" onclick="toggleSize()">Toggle size</a>
+        </div>
+        <div style="clear: both"></div>
+      </div>
+    </div>
+    <div class="aligner">
+      <div class="box middle">
+        <a href="#" onclick="javascript: transfer('#code', '#console')" class="buttoncrap imgbutton">
+          <img id="status" src="down.png" alt="Submit" title="Click to update" style="width: 4em; border: 0px;" />
+        </a>
+      </div>
+    </div>
+
+    <div class="aligner">
+      <div class="box">
+        <div class="header">
+          <h2>Get feedback</h2>
+        </div>
+        <div class="rest">
+          <pre class="prettyprint" id="console">
+			<span class="helptext">
+			  Automated shell script analysis appears here.  <br />
+			</span>
+		  </pre>
+        </div>
+        <span style="font-size: 75%">
+          <a href="about.html">ShellCheck source and info.</a>
+          Also check out <a href="http://explainshell.com/">ExplainShell.com</a>!
+        </span>
+      </div>
+    </div>
+  </div>
+</body>
+
+<style type="text/css">
+.buttoncrap {
+  -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+  -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+  box-shadow:inset 0px 1px 0px 0px #ffffff;
+  -moz-border-radius:6px;
+  -webkit-border-radius:6px;
+  border-radius:6px;
+  border:1px solid #e0e0e0;
+  display:inline-block;
+  color:#777777;
+  font-family:arial;
+  font-size:15px;
+  font-weight:bold;
+  padding:6px 24px;
+  text-decoration:none;
+  text-shadow:1px 1px 0px #ffffff;
+}.buttoncrap:hover {
+  background-color:#dfdfdf;
+}.buttoncrap:active {
+  position:relative;
+  top:1px;
+}
+/* This imageless css button was generated by CSSButtonGenerator.com */
+</style>
+</html>

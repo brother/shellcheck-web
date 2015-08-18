@@ -1,0 +1,561 @@
+<html>
+    <head>
+        <title>About ShellCheck</title>
+        <link href="prettify.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="prettify.js"></script>
+        <script type="text/javascript" src="jquery.js"></script>
+<style>
+.all {
+  width: 1200px;
+  max-width: 95%;
+  padding-left: 2em;
+  padding-right: 2em;
+}
+h3 {
+  padding-top: 1em;
+}
+pre.prettyprint {
+  max-width: 40em;
+  border: 0px;
+}
+.demo {
+  background: #FAFAFA;
+  padding: 1em;
+  margin: 0.5em;
+  border: solid 1px black;
+  display: inline-block;
+}
+.title {
+}
+</style>
+<script>
+  $(document).ready(function() {
+      prettyPrint();
+  });
+</script>
+    </head>
+    <body>
+      <!--
+        <img class="logo" src="shellcheck.svg" alt="ShellCheck logo, a looking glass studying a snail's shell" />
+        -->
+        <div class="all">
+        <div class="almostall">
+        <h1>About ShellCheck</h1>
+        <p>
+        ShellCheck is a static analysis and linting tool for sh/bash scripts. It's mainly focused on handling typical beginner and intermediate level syntax errors and pitfalls where the shell just gives a cryptic error message or strange behavior, but it also reports on a few more advanced issues where corner cases can cause delayed failures.
+        </p>
+        <p>
+          Haskell <a href="https://github.com/koalaman/shellcheck">source code</a> is available on GitHub</a>!
+        </p>
+<h3>Run ShellCheck online</h3>
+<p>Go to <a href="/">ShellCheck.net</a> to copy-paste a shell script and get immediate, automatic feedback!</p>
+<p>The online version is always synced against the latest git commit.</p>
+
+<h3>Run ShellCheck locally</h3>
+<p>If you <a href="https://github.com/koalaman/shellcheck">download</a> and compile the source code, you get a pretty terminal frontend!
+</p>
+<p>With <code>cabal</code> installed, you can also install the latest stable release with <code>cabal install shellcheck</code></p>
+<div style='border-radius: 10px; display: inline-block; padding: 10px; background-color: #000;'>
+  <a href="https://github.com/koalaman/shellcheck">
+    <img src="terminal.png" />
+  </a><br />
+</div>
+<br />
+
+<h3>Run ShellCheck in your editor</h3>
+<p>ShellCheck can output gcc style error messages and checkstyle compatible xml, which allows any editor to show inlined error messages. </p>
+<p>It's also supported directly by <a href="https://github.com/scrooloose/syntastic">Syntastic</a> in Vim and <a href="https://github.com/flycheck/flycheck">Flycheck</a> in Emacs.</p>
+<div style='border-radius: 10px; display: inline-block; padding: 10px; background-color: #000;'>
+  <a href="https://github.com/scrooloose/syntastic">
+    <img src="syntastic.png" />
+  </a> <br />
+</div>
+<p>
+  <a href="https://github.com/flycheck/flycheck">
+    <img src="flycheck.png" />
+  </a><br />
+</p>
+
+</div>
+</p>
+
+<hr />
+<h3>What does ShellCheck check?</h3>
+<p>Here is an incomplete list of things ShellCheck warns about and suggests improvements to:</p>
+
+<p>
+<div class="demo">
+<div class="title">Unquoted globs for find/grep</div>
+<pre class="prettyprint">
+find . -name *.ogg
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Constant test expressions</div>
+<pre class="prettyprint">
+[[ n != 0 ]]
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Assigning arrays to strings</div>
+<pre class="prettyprint">
+args="$@"
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Redirecting into source file</div>
+<pre class="prettyprint">
+sed -e 's/foo/bar/g' file &gt; file
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Existence checks of globs</div>
+<pre class="prettyprint">
+[[ -e *.mpg ]]
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Globs in regex context</div>
+<pre class="prettyprint">
+grep '*foo*' file
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">PS1 colors not in \[..\]</div>
+<pre class="prettyprint">
+PS1='\e[0;32m\$\e[0m '
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Prematurely terminated find -exec</div>
+<pre class="prettyprint">
+find / -exec touch {} &amp;&amp; echo {} \;
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Literal quotes in arguments</div>
+<pre class="prettyprint">
+verbose='--verbose="true"'
+cmd $verbose
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Assignment in subshells</div>
+<pre class="prettyprint">
+echo foo | read bar
+echo $bar
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Confusing time(1) for builtin</div>
+<pre class="prettyprint">
+time --format=%s sleep 10
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">~ in quotes</div>
+<pre class="prettyprint">
+rm "~/my file.txt"
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Single, quoted 'for' argument</div>
+<pre class="prettyprint">
+for f in "*.ogg"
+do rm $f; done
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Arithmetic truncation</div>
+<pre class="prettyprint">
+echo $((n/180*100))
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Functions used externally</div>
+<pre class="prettyprint">
+f() { rm file; }; sudo f
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Unused variables</div>
+<pre class="prettyprint">
+var=World; echo "Hello " var
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Looping over ls output</div>
+<pre class="prettyprint">
+for f in $(ls *.ogg)
+do ...; done
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Arguments in aliases</div>
+<pre class="prettyprint">
+alias archive='mv $1 /backup'
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Referencing arrays as strings</div>
+<pre class="prettyprint">
+files=(foo bar); echo "$files"
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Unquoted command expansion</div>
+<pre class="prettyprint">
+tar cf file$(date).tar dir
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">$ in for loop variables</div>
+<pre class="prettyprint">
+for $var in foo bar baz; do echo "$var"; done
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Unquoted $@</div>
+<pre class="prettyprint">
+touch $@
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Unicode quotes</div>
+<pre class="prettyprint">
+rm “file”
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Attempted redirection of stdout+stderr</div>
+<pre class="prettyprint">
+cmd 2&gt;&amp;1 &gt; /dev/null
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Attempted indirect assignment</div>
+<pre class="prettyprint">
+var$n="Hello"
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Attempted indirect reference</div>
+<pre class="prettyprint">
+echo ${var$n}
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Variables in single quotes</div>
+<pre class="prettyprint">
+echo 'Path is $PATH'
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Comparing numbers with &lt; or &gt;</div>
+<pre class="prettyprint">
+[[ $n &gt; 0 ]]
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Unsupported [ ] operators</div>
+<pre class="prettyprint">
+[ foo =~ re ]
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Using ~ in $PATH</div>
+<pre class="prettyprint">
+PATH="$PATH:~/bin"
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Quoted =~ regex</div>
+<pre class="prettyprint">
+[[ $foo =~ "fo+" ]]
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Opportunities for <code>grep -q</code></div>
+<pre class="prettyprint">
+[[ -z $(find /tmp | grep mpg) ]]
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Tautology due to spacing</div>
+<pre class="prettyprint">
+[[ $foo==0 ]]
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Variable brace expansion (Bash)</div>
+<pre class="prettyprint">
+echo {1..$n}
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Commands eating loop input</div>
+<pre class="prettyprint">
+while read host; do ssh "$host" uptime; done &lt; file
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Decimals arithmetics</div>
+<pre class="prettyprint">
+echo $((3.14*r*r))
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Comma separated arrays</div>
+<pre class="prettyprint">
+var=(1, 2, 3)
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Misused 'exec'</div>
+<pre class="prettyprint">
+exec foo; echo "Done!"
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Globs that could become options</div>
+<pre class="prettyprint">
+touch ./-l; ls *
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Common shebang errors</div>
+<pre class="prettyprint">
+#!/bin/bash -x -e
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Variables in printf format</div>
+<pre class="prettyprint">
+printf "Hello $name"
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Numerical comparison of strings</div>
+<pre class="prettyprint">
+[[ $1 -eq "shellcheck" ]]
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Prefix assignments in args</div>
+<pre class="prettyprint">
+var=42 echo $var
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Implicit precedence in find</div>
+<pre class="prettyprint">
+find . -name '*.bak' -o -name '*~' -delete
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Useless use of echo</div>
+<pre class="prettyprint">
+echo $(date)
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Repetitive redirections</div>
+<pre class="prettyprint">
+cmd1 &gt;&gt; file; cmd2 &gt;&gt; file; cmd3 &gt;&gt; file;
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Redirecting sudo</div>
+<pre class="prettyprint">
+sudo echo 'alias sl=ls' &gt;&gt; /etc/profile
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">[] around ranges in tr</div>
+<pre class="prettyprint">
+tr '[a-z]' '[A-Z]'
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Misquoted traps</div>
+<pre class="prettyprint">
+trap "echo \"Runtime: ${SECONDS}s\"" exit
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">&amp;&amp; in [ .. ]</div>
+<pre class="prettyprint">
+[ $n &amp;&amp; $m ]
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Masked return values</div>
+<pre class="prettyprint">
+export var="$(myfunc)"
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Singlequote closed by apostrophe</div>
+<pre class="prettyprint">
+echo 'Don't forget to run foo --update!'
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Attempting to escape ' in ''</div>
+<pre class="prettyprint">
+var='Don\'t try this at home'
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Misused char class globs</div>
+<pre class="prettyprint">
+ls *[:digit:].txt
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Concatenating strings and arrays.</div>
+<pre class="prettyprint">
+printf "%s\n" "Command line was $@."
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Positional parameter misreference</div>
+<pre class="prettyprint">
+echo "Argument 10 is $10"
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">cd-and-back antipattern</div>
+<pre class="prettyprint">
+for d in *; do cd "$d"; cmd; cd ..; done
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Missing semicolons in loops</div>
+<pre class="prettyprint">
+for f in *.mp3 do true; done
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Catastrophic rm</div>
+<pre class="prettyprint">
+rm -rf "$STEAMROOT/"*
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">$ in assignments</div>
+<pre class="prettyprint">
+$foo=42
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Aliases expanding early</div>
+<pre class="prettyprint">
+alias whereami="echo $PWD"
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Spaces in assignment</div>
+<pre class="prettyprint">
+var = 42
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Features shebang may not support</div>
+<pre class="prettyprint">
+#!/bin/sh
+echo {1..10}
+</pre>
+</div>
+
+<div class="demo">
+<div class="title">Excessive <code>$()/``</code></div>
+<pre class="prettyprint">
+cmd='echo foo'; `$cmd`;
+</pre>
+</div>
+
+</p>
+
+<!-- HTML 2.0 forever! -->
+<hr />
+<h3>What people are saying</h3>
+<blockquote class="twitter-tweet" lang="en"><p>At first you&#39;re like &quot;shellcheck is awesome&quot; but then you&#39;re like &quot;wtf are we still using bash&quot;</p>&mdash; Alexander Tarasikov (@astarasikov) <a href="https://twitter.com/astarasikov/status/568825996532707330">February 20, 2015</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<h3>How to report bugs and issues</h3>
+Bugs, issues and feature suggestions can be <a href="https://github.com/koalaman/shellcheck/issues">filed on Github</a>
+
+
+<h3>More fun stuff</h3>
+
+      <p>
+        For more fun stuff, see the <a href="http://www.vidarholen.net">author's home page</a>!.
+      </p>
+
+      </div>
+      </div>
+    </body>
+</html>
