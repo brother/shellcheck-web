@@ -7,8 +7,8 @@ $fds = array(
 );
 $cwd = '/tmp';
 $env = array();
-
-$process = proc_open("exec /path/to/shellcheckwrapper.sh", $fds, $pipes, $cwd, $env);
+require "local-config.php";
+$process = proc_open("exec ".$path["wrapper"], $fds, $pipes, $cwd, $env);
 if(is_resource($process)) {
   fwrite($pipes[0], $_POST["script"]);
   fclose($pipes[0]);
