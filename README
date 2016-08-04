@@ -1,3 +1,9 @@
+Please use the official web package instead of this one.
+  https://github.com/koalaman/shellcheck.net
+
+This tree is old and unmaintaned. Kept for history.
+//brother, 2016-08
+
 Based on initial work by koalaman for the shellcheck.net service found
 in shellcheck github tracker at URL
   https://github.com/koalaman/shellcheck/issues/423#issuecomment-128749979
